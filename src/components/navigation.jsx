@@ -6,7 +6,7 @@ import "./navigation.sass";
 
 function navigation() {
 	return (
-		<nav>
+		<div className="navigation">
 			<ul>
 				<li>
 					<Link href="/">Home</Link>
@@ -18,7 +18,7 @@ function navigation() {
 					<Link href="/about">About</Link>
 				</li>
 			</ul>
-		</nav>
+		</div>
 	);
 }
 

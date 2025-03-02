@@ -3,7 +3,23 @@
 import React, { useState } from "react";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../utils/authConfig";
-import { callMsGraph } from "../utils/graph";
+import { callMsGraph, getCalendarEvents, getUserPhoto } from "../utils/graph";
+
+export function User({ userInfo }) {
+	if (!userInfo) {
+		return null;
+	}
+
+	return (
+		<div>
+			<h2>{userInfo.displayName}</h2>
+			<p>{userInfo.jobTitle}</p>
+			<p>{userInfo.mail}</p>
+			<p>{userInfo.mobilePhone}</p>
+			<img src={photo} alt="User" />
+		</div>
+	);
+}
 
 function page() {
 	const { instance } = useMsal();
@@ -11,22 +27,6 @@ function page() {
 	const [photo, setPhoto] = useState();
 	const [events, setEvents] = useState([]);
 	const [updatedEvent, setUpdatedEvent] = useState(null);
-
-	function User({ userInfo }) {
-		if (!userInfo) {
-			return null;
-		}
-
-		return (
-			<div>
-				<h2>{userInfo.displayName}</h2>
-				<p>{userInfo.jobTitle}</p>
-				<p>{userInfo.mail}</p>
-				<p>{userInfo.mobilePhone}</p>
-				<img src={photo} alt="User" />
-			</div>
-		);
-	}
 
 	const handleLogin = async () => {
 		try {
