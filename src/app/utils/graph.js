@@ -22,16 +22,26 @@ export const getUserPhoto = async (accessToken) => {
 };
 
 export const getCalendarEvents = async (accessToken) => {
-	const response = await fetch("https://graph.microsoft.com/v1.0/me/events", {
-		headers: { Authorization: `Bearer ${accessToken}` },
-	});
+	try {
+		const response = await fetch("https://graph.microsoft.com/v1.0/me/events", {
+			headers: { Authorization: `Bearer ${accessToken}` },
+		});
+		const data = await response.json();
+		return data.value; // Returns an array of events
+	} catch (error) {
 
+		console.error(error);
+		if (error.name === "InteractionRequiredAuthError") {
+			await instance.loginPopup(); // If silent token acquisition fails, prompt login
+		}
+		if (error.name === "Unauthorized") {
+			await instance.loginPopup(); // If silent token acquisition fails, prompt login
+		}
+	}
+	
 	if (!response.ok) {
 		throw new Error("Failed to fetch calendar events");
 	}
-
-	const data = await response.json();
-	return data.value; // Returns an array of events
 };
 
 export const updateCalendarEvent = async (

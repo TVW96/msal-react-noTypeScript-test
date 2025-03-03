@@ -3,8 +3,6 @@ import "./globals.css";
 import { msalConfig } from "./utils/authConfig";
 import { MsalProvider } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
-import Footer from "@/components/footer";
-import Navigation from "@/components/navigation";
 import QueryProvider from "@/components/QueryProvider";
 
 const msalinstance = new PublicClientApplication(msalConfig);
@@ -24,9 +22,7 @@ export default function RootLayout({ children }) {
 			<body>
 				<MsalProvider instance={msalinstance}>
 					<QueryProvider>
-						<Navigation />
 						{children}
-						<Footer />
 					</QueryProvider>
 				</MsalProvider>
 			</body>

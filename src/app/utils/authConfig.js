@@ -8,6 +8,7 @@ export const msalConfig = {
 
 export const loginRequest = {
 	scopes: ["User.Read", "Calendars.ReadWrite"], // Minimum scope for retrieving user profile info
+
 };
 
 export const logoutRequest = {

@@ -5,17 +5,17 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../utils/authConfig";
 import { callMsGraph, getCalendarEvents, getUserPhoto } from "../utils/graph";
 
-export function User({ userInfo }) {
-	if (!userInfo) {
+export function User({ userdata, photo }) {
+	if (!userdata) {
 		return null;
 	}
 
 	return (
 		<div>
-			<h2>{userInfo.displayName}</h2>
-			<p>{userInfo.jobTitle}</p>
-			<p>{userInfo.mail}</p>
-			<p>{userInfo.mobilePhone}</p>
+			<h2>{userdata.displayName}</h2>
+			<p>{userdata.jobTitle}</p>
+			<p>{userdata.mail}</p>
+			<p>{userdata.mobilePhone}</p>
 			<img src={photo} alt="User" />
 		</div>
 	);
@@ -23,9 +23,9 @@ export function User({ userInfo }) {
 
 function page() {
 	const { instance } = useMsal();
-	const [userInfo, setUserInfo] = useState(null);
+	const [userData, setUserInfo] = useState(null);
 	const [photo, setPhoto] = useState();
-	const [events, setEvents] = useState([]);
+	const [eventList, setEventList] = useState([]);
 	const [updatedEvent, setUpdatedEvent] = useState(null);
 
 	const handleLogin = async () => {
@@ -34,7 +34,7 @@ function page() {
 			const userData = await callMsGraph(response.accessToken);
 			setUserInfo(userInfo);
 			const eventList = await getCalendarEvents(response.accessToken);
-			setEvents(eventList);
+			setEventList(eventList);
 			const photoUrl = await getUserPhoto(response.accessToken);
 			setPhoto(photoUrl);
 			// For use in Postman
@@ -46,6 +46,7 @@ function page() {
 
 	return (
 		<div>
+			<h1>Login Page</h1>
 			<p>Sign in to view and manage your user account.</p>
 			<button type="button" onClick={handleLogin}>
 				Sign in
