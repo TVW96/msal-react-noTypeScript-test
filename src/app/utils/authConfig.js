@@ -14,3 +14,7 @@ export const loginRequest = {
 export const logoutRequest = {
 	postLogoutRedirectUri: "http://localhost:3000/", // Redirect to home page after logout
 };
+
+export const graphConfig = {
+    graphMeEndpoint: "https://graph.microsoft.com/v1.0/me" //e.g. https://graph.microsoft.com/v1.0/me
+};

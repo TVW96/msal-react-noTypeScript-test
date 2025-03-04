@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { useMsal } from "@azure/msal-react";
-import { logoutRequest } from "../utils/authConfig";
+import { loginRequest, logoutRequest } from "../utils/authConfig";
 import { callMsGraph, getCalendarEvents, getUserPhoto, updateCalendarEvent } from "../utils/graph";
 import { User } from "../login/page";
 import "./user_account.sass";
 
 function page() {
-	const { instance } = useMsal();
+	const { instance, accounts } = useMsal();
 	const [userData, setUserInfo] = useState(null);
 	const [photo, setPhoto] = useState();
 	const [eventList, setEventList] = useState([]);
@@ -28,6 +28,19 @@ function page() {
 		}
 	};
 
+	const requestCalendarEvents = async () => {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance
+            .acquireTokenSilent({
+                ...loginRequest,
+                account: accounts[0],
+            })
+            .then((response) => {
+                getCalendarEvents(response.accessToken).then((response) => setEventList(response));
+                console.log("Calendar data: ", response);
+            });
+	}
+
 	const getUserData = async () => {
 		try {
 			const currentAccounts = instance.getAllAccounts();
@@ -43,7 +56,7 @@ function page() {
 			});
 			
 			const userData = await callMsGraph(response.accessToken);
-			console.log(userData);
+			console.log("get user data", userData);
 			setUserInfo(userData);
 
 			const photoUrl = await getUserPhoto(response.accessToken);
@@ -66,9 +79,8 @@ function page() {
 		return (
 			<div>
 				<h2>{userdata.displayName}</h2>
-				<p>{userdata.jobTitle}</p>
+				<p>{userdata.id}</p>
 				<p>{userdata.mail}</p>
-				<p>{userdata.mobilePhone}</p>
 				<img src={photo} alt="User" />
 			</div>
 		);
@@ -88,7 +100,7 @@ function page() {
 			</content>
 			<main>
 				<div className="button-container">
-					<button type='button' onClick={getCalendarEvents}>Outlook Calendar</button>
+					<button type='button' onClick={requestCalendarEvents}>Outlook Calendar</button>
 					<button type='button' onClick={getUserData}>Profile</button>
 				</div>
 				<div className="content-container">
@@ -99,7 +111,6 @@ function page() {
 						) : (
 							<p>User profile shown here.</p>
 						)}
-						<User userdata={userData} photo={photo} />
 					</div>
 					<div className="event-list">
 						<h2>Calendar Events</h2>
